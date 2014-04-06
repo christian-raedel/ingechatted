@@ -51,8 +51,17 @@ Model.prototype.add = function(obj, callback) {
         throw new Error('invalid arguments to add an object to ' + this.name);
     }
     var field;
+    for (field in this.schema) {
+        if (this.schema.hasOwnProperty(field) && !obj.hasOwnProperty(field) && this.schema[field].defaultValue) {
+            if (this.schema[field].evalDefaultValue) {
+                obj[field] = obj[field] || eval(this.schema[field].defaultValue) || null;
+            } else {
+                obj[field] = obj[field] || this.schema[field].defaultValue;
+            }
+        }
+    }
     for (field in obj) {
-        if (obj.hasOwnProperty(field) && this.schema[field].required) {
+        if (obj.hasOwnProperty(field)) {
             this.validate(field, obj[field], callback);
         }
     }
@@ -75,6 +84,9 @@ Model.prototype.validate = function(field, value, callback) {
         msg = 'cannot validate ' + field;
     if (!prototype) {
         return callback(new Error(msg + ', because it is not in the schema'));
+    }
+    if (prototype.required && !value) {
+        return callback(new Error(msg + ', because it has no value'));
     }
     if (prototype.type && prototype.type !== typeof value) {
         return callback(new Error(msg + ', because the value has not the defined type'));

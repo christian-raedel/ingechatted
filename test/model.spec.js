@@ -13,6 +13,10 @@ describe('Model', function() {
                 unique: true,
                 minLength: 3,
                 maxLength: 9
+            },
+            lastLoginDate: {
+                defaultValue: 'new Date().valueOf()',
+                evalDefaultValue: true
             }
         },
         store = [
@@ -61,6 +65,14 @@ describe('Model', function() {
     });
 
     describe('#validate', function() {
+        it('should fail, if value is required and has no value', function(done) {
+            var model = new Model(name, { name: { required: true }});
+            model.validate('name', null, function(err) {
+                err.should.be.ok;
+                done();
+            });
+        });
+
         it('should fail, if value has not the same type', function(done) {
             var model = new Model(name, { name: { type: 'string' }});
             model.validate('name', {}, function(err) {
@@ -102,6 +114,7 @@ describe('Model', function() {
             model.add({ name: 'ingelise' }, function(err, idx) {
                 should(err).not.be.ok;
                 idx.should.be.equal(0);
+                model.store[0].lastLoginDate.should.be.ok;
                 done();
             });
         });
