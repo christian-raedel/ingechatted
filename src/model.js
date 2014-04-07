@@ -52,7 +52,8 @@ Model.prototype.add = function(obj, callback) {
     }
     var field;
     for (field in this.schema) {
-        if (this.schema.hasOwnProperty(field) && !obj.hasOwnProperty(field) && this.schema[field].defaultValue) {
+        if (this.schema.hasOwnProperty(field) && !obj.hasOwnProperty(field) &&
+            this.schema[field].defaultValue) {
             if (this.schema[field].evalDefaultValue) {
                 obj[field] = obj[field] || eval(this.schema[field].defaultValue) || null;
             } else {
@@ -66,7 +67,7 @@ Model.prototype.add = function(obj, callback) {
         }
     }
     this.store.push(obj);
-    callback(null, this.store.length - 1);
+    callback(null, obj);
 };
 
 /**
@@ -166,6 +167,10 @@ Model.prototype.sort = function(field, order, callback) {
     });
     callback(null, result);
 };
+
+Model.prototype.__defineGetter__('length', function() {
+    return this.store.length;
+});
 
 /**
  * Persists a store into redis database and sets the 'saved' member on model

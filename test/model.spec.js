@@ -108,21 +108,23 @@ describe('Model', function() {
     });
 
     describe('#add', function() {
-        var model = new Model(name, schema);
-
         it('should add a valid object to models store', function(done) {
-            model.add({ name: 'ingelise' }, function(err, idx) {
+            var model = new Model(name, schema),
+                user = { name: 'ingelise' };
+            model.add(user, function(err, obj) {
                 should(err).not.be.ok;
-                idx.should.be.equal(0);
-                model.store[0].lastLoginDate.should.be.ok;
+                obj.should.be.eql(user);
+                obj.lastLoginDate.should.be.ok;
                 done();
             });
         });
 
         it('should add another object to models store', function(done) {
-            model.add({ name: 'liseinge' }, function(err, idx) {
+            var model = new Model(name, schema),
+                user = { name: 'liseinge' };
+            model.add(user, function(err, obj) {
                 should(err).not.be.ok;
-                idx.should.be.equal(1);
+                obj.should.be.eql(user);
                 done();
             });
         });
@@ -171,6 +173,14 @@ describe('Model', function() {
                 res.should.be.eql(sortedStore);
                 done();
             });
+        });
+    });
+
+    describe('.length', function() {
+        it('should return the length of the store', function() {
+            var model = new Model(name, {});
+            model.store = store;
+            model.length.should.be.equal(3);
         });
     });
 

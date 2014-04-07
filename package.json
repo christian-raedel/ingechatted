@@ -4,15 +4,18 @@
   "description": "a node.js chat server",
   "main": "server.js",
   "dependencies": {
+    "bcrypt": "^0.7.7",
     "debug": "^0.8.0",
     "express": "^3.5.1",
     "hiredis": "^0.1.16",
+    "optimist": "^0.6.1",
     "redis": "^0.10.1",
+    "uuid": "^1.4.1",
     "websocket": "^1.0.8"
   },
   "devDependencies": {
-      "mocha": "^1.18.2",
-      "should": "^3.2.0"
+    "mocha": "^1.18.2",
+    "should": "^3.2.0"
   },
   "scripts": {
     "test": "mocha test/*.spec.js"
@@ -31,5 +34,10 @@
   "bugs": {
     "url": "https://github.com/christian-raedel/ingechatted/issues"
   },
-  "homepage": "https://github.com/christian-raedel/ingechatted"
+  "homepage": "https://github.com/christian-raedel/ingechatted",
+  "jshintConfig": {
+    "strict": true,
+    "browser": true,
+    "node": true
+  }
 }

@@ -1,0 +1,52 @@
+{
+    "connections": {
+        "id": {
+            "required": true,
+            "type": "string"
+        }
+    },
+    "users": {
+        "name": {
+            "required": true,
+            "type": "string",
+            "unique": true,
+            "minLength": 3,
+            "maxLength": 26
+        },
+        "password": {
+            "required": true,
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 32
+        },
+        "picture": {
+            "required": true,
+            "type": "string",
+            "defaultValue": "/images/avatar.png"
+        },
+        "lastLoginDate": {
+            "type": "number"
+        }
+    },
+    "messages": {
+        "type": {
+            "required": true,
+            "type": "number"
+        },
+        "data": {
+            "required": true,
+            "type": "object"
+        }
+    },
+    "authenticated": {
+        "name": {
+            "required": true,
+            "type": "string"
+        },
+        "lastActionDate": {
+            "type": "number",
+            "defaultValue": "new Date().valueOf()",
+            "evalDefaultValue": true
+        }
+    }
+}
