@@ -11,6 +11,9 @@ function Manager(name, config, opts) {
     for (var key in this.schemes) {
         if (this.schemes.hasOwnProperty(key)) {
             this[key] = new Model(key, this.schemes[key], opts);
+            if (opts.debug && key === opts.debug[key]) {
+                this[key].store = opts.debug[key];
+            }
         }
     }
     this.debug = require('debug')('model:manager:' + this.name);

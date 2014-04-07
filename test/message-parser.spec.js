@@ -20,7 +20,6 @@ describe('Manager', function() {
         });
 
         it('should has all models', function() {
-            manager.connections.should.be.an.instanceOf(Model);
             manager.users.should.be.an.instanceOf(Model);
             manager.messages.should.be.an.instanceOf(Model);
             manager.authenticated.should.be.an.instanceOf(Model);
@@ -49,7 +48,7 @@ describe('MessageParser', function() {
             manager = new Manager('cid', __dirname + '/../config/models.json');
             manager.users.store = [ user ];
             parser = new MessageParser(manager);
-            parser.MESSAGETYPES().AUTH.response(connection, message, function(err, next) {
+            parser.MESSAGETYPES.AUTH.response(connection, message, function(err, next) {
                 should(err).be.not.ok;
                 next.should.be.equal('WELCOME');
                 done();

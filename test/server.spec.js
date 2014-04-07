@@ -1,21 +1,27 @@
 'use strict';
 
-var WebSocketClient = require('websocket').client;
+var WebSocket = require('ws');
+
+function getWebSocket() {
+    return new WebSocket('ws://127.0.0.1:3000');
+}
 
 describe('WebSocket', function() {
     describe('#AUTH', function() {
-        it('receive messages', function(done) {
-            var client = new WebSocketClient();
-            client.on('connect', function(connection) {
-                connection.should.be.ok;
+        it('receives message', function(done) {
+            var ws = getWebSocket();
+            ws.onmessage = function(message) {
+                message = JSON.parse(message.data);
+                message.type.should.be.equal('AUTH');
                 done();
-                connection.on('message', function(message) {
-                    console.log(message);
-                    message.should.be.ok;
-                    done();
-                });
-            });
-            client.connect('ws://127.0.0.1:3000');
+            };
         });
+
+        it('sends message', function(done) {
+            var ws = getWebSocket();
+            ws.send(JSON.stringify({
+                name: 'ingelise',
+            }))
+        })
     });
 });

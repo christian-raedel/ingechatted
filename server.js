@@ -2,63 +2,64 @@
 
 var debug = require('debug')('ingechatted'),
     redis = require('redis'),
-    WebSocketServer = require('websocket').server,
+    WebSocketServer = require('ws').Server,
+    http = require('http'),
     express = require('express'),
-    uuid = require('uuid'),
+    app = express(),
     argv = require('optimist').argv,
     Manager = require('./src/manager'),
     MessageParser = require('./src/message-parser');
 
 var manager = new Manager('inge', __dirname + '/config/models', {
-        redis: redis.createClient(argv['redis-port'] || 6437, argv['redis-host'] || '127.0.0.1')
+        redis: redis.createClient(argv['redis-port'] || 6437, argv['redis-host'] || '127.0.0.1'),
+        debug: {
+            users: [
+                { name: 'ingelise', password: 's3cr3t26' }
+            ]
+        }
     }),
     parser = new MessageParser(manager);
 
-var app = express();
-app.use(express.static(__dirname + '/public'));
-app.listen(argv['port'] || 3000, function() {
-    debug('server listen on ' + (argv['port'] || 3000));
+app.configure(function() {
+    app.use('/', express.logger());
+    app.use('/', express.static(__dirname + '/public'));
 });
 
-var server = new WebSocketServer({ 
-  httpServer: app,
-  autoAcceptConnections: true
+var server = http.createServer(app),
+    port = argv['port'] || 3000;
+
+server.listen(port, function() {
+    debug('server listen on port [' + port + ']');
 });
-server.on('connect', function(connection) {
-    console.log(req);
-    connection.id = uuid.v4();
-    manager.connections.add(connection, function(err, connection) {
-        if (err) {
+
+var clients = [],
+    wss = new WebSocketServer({ server: server });
+
+wss.on('connection', function(ws) {
+    clients.push(ws);
+    debug('(+1/' + clients.length + ') client connected');
+    parser.MESSAGETYPES.AUTH.request(ws);
+
+    ws.on('close', function() {
+        clients = clients.splice(ws, 1);
+        debug('(-1/' + clients.length + ') client disconnected');
+    });
+
+    ws.on('message', function(data) {
+        try {
+            parser.parse(ws, JSON.parse(data), function (err, next) {
+                if (err) {
+                    throw err;
+                }
+                if (parser.MESSAGETYPES.hasOwnProperty(next)) {
+                    debug('[invoke next action] ' + next);
+                }
+            });
+        } catch (err) {
             debug(err.message);
         }
-        debug('(' + manager.connections.length + ') clients connected');
-        parser.request(connection, 'AUTH');
-
-        connection.on('close', function() {
-            manager.connections.remove('id', connection.id, function(err, count) {
-                if (err) {
-                    debug(err.message);
-                }
-                debug('(' + count + '/' + manager.connections.length + ') clients disconnected');
-            });
-        });
-
-        connection.on('message', function(data) {
-            if (data.type === 'utf8') {
-                debug('message received: ' + data.utf8Data);
-                try {
-                    parser.parse(JSON.parse(data.utf8Data), function(err, next) {
-                        if (err) {
-                            throw err;
-                        }
-                        if (parser.MESSAGETYPES.hasOwnProperty(next)) {
-                            debug(next);
-                        }
-                    });
-                } catch (err) {
-                    debug(err.message);
-                }
-            }
-        });
     });
+});
+wss.on('error', function(err) {
+    debug(err.message);
 });

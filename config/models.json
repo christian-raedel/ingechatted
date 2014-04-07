@@ -1,10 +1,4 @@
 {
-    "connections": {
-        "id": {
-            "required": true,
-            "type": "string"
-        }
-    },
     "users": {
         "name": {
             "required": true,
@@ -42,6 +36,10 @@
         "name": {
             "required": true,
             "type": "string"
+        },
+        "connection": {
+            "required": true,
+            "type": "object"
         },
         "lastActionDate": {
             "type": "number",
