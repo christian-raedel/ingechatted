@@ -1,0 +1,7 @@
+{
+    "name": "ingechatted",
+    "port": 3000,
+    "redis": {
+        "port": 9024
+    }
+}

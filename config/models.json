@@ -11,7 +11,8 @@
             "required": true,
             "type": "string",
             "minLength": 8,
-            "maxLength": 32
+            "maxLength": 32,
+            "secure": "hash"
         },
         "picture": {
             "required": true,
@@ -23,13 +24,27 @@
         }
     },
     "messages": {
-        "type": {
-            "required": true,
-            "type": "number"
-        },
-        "data": {
+        "from": {
             "required": true,
             "type": "object"
+        },
+        "to": {
+            "required": true,
+            "type": "object"
+        },
+        "body": {
+            "required": true,
+            "type": "string",
+            "minLength": 5
+        },
+        "savedDate": {
+            "required": true,
+            "type": "number",
+            "defaultValue": "new Date().valueOf()",
+            "evalDefaultValue": true
+        },
+        "deliveredDate": {
+            "type": "number"
         }
     },
     "authenticated": {
@@ -45,6 +60,12 @@
             "type": "number",
             "defaultValue": "new Date().valueOf()",
             "evalDefaultValue": true
+        }
+    },
+    "channels": {
+        "name": {
+            "required": true,
+            "type": "string"
         }
     }
 }
