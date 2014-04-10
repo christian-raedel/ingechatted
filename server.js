@@ -11,7 +11,7 @@ var config = require('./config/' + (process.env.NODE_ENV === 'production' ? 'pro
     createManager = require('./lib/manager').createManager,
     Functions = require('./lib/functions');
 
-var manager = createManager('./config/models.json', {
+var manager = createManager(__dirname + '/config/models.json', {
         redis: redis.createClient(config.redis.port || 6437, config.redis.host || '127.0.0.1'),
         debug: {
             users: [
