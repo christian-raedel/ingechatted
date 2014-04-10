@@ -45,6 +45,7 @@ describe('Model', function () {
         });
     });
 
+    /*
     describe('#indexOf', function () {
         it('should return -1, if the object is not in store', function () {
             var model = new Model(name, schema);
@@ -67,128 +68,105 @@ describe('Model', function () {
             model.indexOf('id', 1).should.be.equal(0);
         });
     });
+    */
 
     describe('#validate', function () {
-        it('should fail, if value is required and has no value', function (done) {
+        it('should fail, if value is required and has no value', function () {
             var model = new Model(name, { name: { required: true }});
-            model.validate('name', null, function (err) {
-                err.should.be.ok;
-                done();
-            });
+            try {
+                model.validate('name', null);
+            } catch(err) {
+                should(err).be.ok;
+            }
         });
 
-        it('should fail, if value has not the same type', function (done) {
+        it('should fail, if value has not the same type', function () {
             var model = new Model(name, { name: { type: 'string' }});
-            model.validate('name', {}, function (err) {
-                err.should.be.ok;
-                done();
-            });
+            try {
+                model.validate('name', {});
+            } catch(err) {
+                should(err).be.ok;
+            }
         });
 
-        it('should fail, if value is not unique', function (done) {
+        it('should fail, if value is not unique', function () {
             var model = new Model(name, { name: { unique: true }});
             model.store = [
                 { name: 'ingelise' }
             ];
-            model.validate('name', 'ingelise', function (err) {
-                err.should.be.ok;
-                done();
-            });
+            try {
+                model.validate('name', 'ingelise');
+            } catch(err) {
+                should(err).be.ok;
+            }
         });
 
-        it('should fail, when minLength is given', function (done) {
+        it('should fail, when minLength is given', function () {
             var model = new Model(name, { name: { minLength: 3 }});
-            model.validate('name', 'in', function (err) {
-                err.should.be.ok;
-                done();
-            });
+            try {
+                model.validate('name', 'in');
+            } catch(err) {
+                should(err).be.ok;
+            }
         });
 
-        it('should fail, when maxLength is given', function (done) {
+        it('should fail, when maxLength is given', function () {
             var model = new Model(name, { name: { maxLength: 7 }});
-            model.validate('name', 'ingelise', function (err) {
-                err.should.be.ok;
-                done();
-            });
+            try {
+                model.validate('name', 'ingelise');
+            } catch(err) {
+                should(err).be.ok;
+            }
         });
     });
 
     describe('#add', function () {
-        it('should add a valid object to models store', function (done) {
+        it('should add a valid object to models store', function () {
             var model = new Model(name, schema),
                 user = { name: 'ingelise' };
-            model.add(user, function (err, obj) {
-                should(err).not.be.ok;
-                obj.should.be.eql(user);
-                obj.lastLoginDate.should.be.ok;
-                done();
-            });
+            model.add(user).should.be.ok;
         });
 
-        it('should add another object to models store', function (done) {
+        it('should add another object to models store', function () {
             var model = new Model(name, schema),
                 user = { name: 'liseinge' };
-            model.add(user, function (err, obj) {
-                should(err).not.be.ok;
-                obj.should.be.eql(user);
-                done();
-            });
+            model.add(user).should.be.ok;
         });
     });
 
     describe('#remove', function () {
-        it('should remove an object from models store', function (done) {
+        it('should remove an object from models store', function () {
             var model = new Model(name, {});
             model.store = store;
-            model.remove('id', 2, function (err, res) {
-                should(err).not.be.ok;
-                res.should.be.equal(1);
-                done();
-            });
+            model.remove('id', 2).should.be.equal(1);
         });
 
-        it('should remove more than one object from models store', function (done) {
+        it('should remove more than one object from models store', function () {
             var model = new Model(name, {});
             model.store = store;
-            model.remove('name', 'ingelise', function (err, res) {
-                should(err).not.be.ok;
-                res.should.be.eql(2);
-                done();
-            });
+            model.remove('name', 'ingelise').should.be.equal(2);
         });
     });
 
     describe('#find', function () {
-        it('should return an array with found objects', function (done) {
+        it('should return an array with found objects', function () {
             var model = new Model(name, {});
             model.store = store;
-            model.find('name', 'ingelise', function (err, res) {
-                should(err).be.not.ok;
-                res.length.should.be.equal(2);
-                done();
-            });
+            model.find('name', 'ingelise').length.should.be.equal(2);
         });
 
-        it('should return an array with found objects with search by RegExp', function(done) {
+        it('should return an array with found objects with search by RegExp', function() {
             var model = new Model(name, {});
             model.store = store;
-            model.find('name', '/inge.*/', function(err, res) {
-                should(err).be.not.ok;
-                res.length.should.be.equal(3);
-                done();
-            });
+            model.find('name', '/inge.*/').length.should.be.equal(3);
         });
     });
 
     describe('#sort', function () {
-        it('should return an array with sorted objects', function (done) {
+        it('should return an array with sorted objects', function () {
             var model = new Model(name, {});
             model.store = store;
-            model.sort('name', function (err, res) {
-                should(err).be.not.ok;
-                res.should.be.eql(sortedStore);
-                done();
-            });
+            model.sort('name').should.be.eql(sortedStore);
         });
     });
 

@@ -52,10 +52,6 @@
             "required": true,
             "type": "string"
         },
-        "connection": {
-            "required": true,
-            "type": "object"
-        },
         "lastActionDate": {
             "type": "number",
             "defaultValue": "new Date().valueOf()",
@@ -66,6 +62,11 @@
         "name": {
             "required": true,
             "type": "string"
+        },
+        "public": {
+            "required": true,
+            "type": "boolean",
+            "defaultValue": true
         }
     }
 }

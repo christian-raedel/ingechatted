@@ -1,7 +1,15 @@
 {
     "name": "ingechatted",
-    "port": 3000,
+    "url": "ws://localhost:8080/ws",
     "redis": {
         "port": 9024
+    },
+    "content": {
+        "users": [
+            { "name": "ingelise", "password": "s3cr3t26" }
+        ],
+        "channels": [
+            { "name": "ingeworld", "public": true }
+        ]
     }
 }
