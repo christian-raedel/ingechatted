@@ -45,6 +45,9 @@
         },
         "deliveredDate": {
             "type": "number"
+        },
+        "eligible": {
+            "type": "object"
         }
     },
     "authenticated": {

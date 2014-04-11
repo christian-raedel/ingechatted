@@ -4,12 +4,26 @@
     "redis": {
         "port": 9024
     },
+    "models": "config/models.json",
     "content": {
         "users": [
-            { "name": "ingelise", "password": "s3cr3t26" }
+            {
+                "name": "ingelise",
+                "password": "46f52dd1a58a90c398289a4a0e04233e8fa24c77"
+            }
         ],
         "channels": [
-            { "name": "ingeworld", "public": true }
+            {
+                "name": "global",
+                "public": true
+            }
+        ],
+        "messages": [
+            {
+                "from": "ingelise",
+                "to": "global",
+                "body": "hello globe!"
+            }
         ]
     }
 }
