@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var server = require('./lib/server').createServer();
+    var server = require('./lib/app').createServer();
 
     server.on('shutdown', function(reason) {
         process.exit(reason);

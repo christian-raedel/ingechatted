@@ -26,11 +26,11 @@
     "messages": {
         "from": {
             "required": true,
-            "type": "object"
+            "type": "string"
         },
         "to": {
             "required": true,
-            "type": "object"
+            "type": "string"
         },
         "body": {
             "required": true,
