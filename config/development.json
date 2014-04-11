@@ -4,6 +4,7 @@
     "redis": {
         "port": 9024
     },
+    "crossbar": "crossbar",
     "models": "config/models.json",
     "content": {
         "users": [
