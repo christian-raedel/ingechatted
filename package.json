@@ -12,6 +12,7 @@
     "when": "^3.1.0"
   },
   "devDependencies": {
+    "grunt-contrib-jshint": "^0.10.0",
     "mocha": "^1.18.2",
     "should": "^3.2.0"
   },

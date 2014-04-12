@@ -1,0 +1,23 @@
+{
+  "name": "ingechatted",
+  "version": "0.0.0",
+  "homepage": "https://github.com/christian-raedel/ingechatted",
+  "authors": [
+    "Christian Rädel <christian.raedel@gmail.com>"
+  ],
+  "description": "the client for the ingechatted server",
+  "main": "app.js",
+  "keywords": [
+    "ingechatted"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "test"
+  ],
+  "dependencies": {
+    "angular": "~1.2.16"
+  }
+}

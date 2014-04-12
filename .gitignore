@@ -1,3 +1,7 @@
 /node_modules
+/frontend/bower_components
+/frontend/node_modules
+/frontend/build
+/public/javascripts
 /*.log
 /*.i*
