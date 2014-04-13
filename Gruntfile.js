@@ -8,8 +8,8 @@
         all: [ '*.js', 'lib/**/*.js', 'test/**/*.js', 'config/**/*.json' ],
         options: {
           globals: {
-            "strict": true,
-            "node"  : true
+            'strict': true,
+            'node'  : true
           }
         }
       }

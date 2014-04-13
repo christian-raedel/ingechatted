@@ -1,81 +1,99 @@
 (function() {
   'use strict';
 
-  var gruntfile = 'Gruntfile.js',
-      configFiles = 'config/**/*.json',
-      srcFiles = [ 'lib/**/*.js' ],
-      testFiles = [ 'test/**/*.js' ],
-      allFiles = srcFiles.concat(gruntfile, testFiles, configFiles),
-      bowerComponents = [
+  var components = [
         'angular/angular.js'
       ].map(
         function(item) {
           return 'bower_components/' + item;
         }
-      ),
-      appFile = 'build/app.js';
+      );
 
   function Gruntfile(grunt) {
     grunt.initConfig({
       pkg   : grunt.file.readJSON('bower.json'),
       jshint: {
-        all: allFiles,
-        src: srcFiles.concat(configFiles),
-        test: testFiles.concat(configFiles),
+        'source': '<%= watch.source.files =>',
+        'test': '<%= watch.test.files =>',
+        'config': '<%= watch.config.files =>',
         options: {
           globals: {
-            "strict" : true,
-            "browser": true
+            'strict' : true,
+            'browser': true
           }
         }
       },
       concat: {
-        javascripts: {
-          src : bowerComponents.concat(srcFiles),
-          dest: appFile
+        'source': {
+          src : '<%= watch.source.files %>',
+          dest: 'build/_source.js'
+        },
+        'components': {
+          src: components,
+          dest: 'build/_components.js'
+        },
+        'less': {
+          src : [ 'src/**/*.less' ],
+          dest: 'build/_build.less'
+        },
+        'build': {
+          src : [ 'build/_components.js', 'build/_source.js' ],
+          dest: 'build/_build.js'
         }
       },
-      uglify: {
-        options: {
-          banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-        },
-        build  : {
-          src : appFile,
-          dest: appFile.substr(0, appFile.lastIndexOf('.')) + '.min.js'
+      less: {
+        'build': {
+          files: {
+            'build/_build.css': 'build/_build.less'
+          },
+          options: {
+            cleancss: true
+          }
         }
       },
       copy: {
-        javascripts: {
+        'javascripts': {
           files: [{
-            expand: true,
-            cwd: 'build/',
-            src: '*.js',
-            dest: '../public/javascripts/',
-            filter: 'isFile'
+            src: 'build/_build.js',
+            dest: '../public/js/app.js'
           }]
+        },
+        'stylesheets': {
+          files: [{
+                    src: 'build/_build.css',
+                    dest: '../public/js/styles.css'
+                  }]
         }
       },
       watch: {
-        gruntfile: {
-          files: gruntfile,
-          tasks: [ 'jshint:gruntfile' ]
-        },
-        src: {
-          files: srcFiles,
+        'source': {
+          files: [ 'src/**/*.js' ],
           tasks: [ 'default' ],
           options: {
             spawn: false
           }
         },
-        test: {
-          files: testFiles,
+        'test': {
+          files: [ 'test/**/*.spec.js' ],
           tasks: [ 'jshint:test', 'karma' ],
           options: {
             spawn: false
           }
+        },
+        'config': {
+          files: [ 'Gruntfile.js', 'config/**/*.json' ],
+          tasks: []
+        },
+        'less': {
+          files: [ 'src/**/*.less' ],
+          tasks: []
+        },
+        'templates': {
+          files: [ 'src/**/*.tpl.html' ],
+          tasks: []
         }
       },
-      clean: [ 'build/*.js' ]
+      clean: [ 'build/*' ]
     });
 
     [
@@ -84,15 +102,27 @@
       'grunt-contrib-uglify',
       'grunt-contrib-copy',
       'grunt-contrib-watch',
-      'grunt-contrib-clean'
+      'grunt-contrib-clean',
+      'grunt-contrib-less'
     ].forEach(
       function(task) {
         grunt.loadNpmTasks(task);
       }
     );
 
-    grunt.registerTask('default', [ 'jshint', 'concat', 'copy', 'watch' ]);
-    grunt.registerTask('deploy', [ 'jshint', 'concat', 'uglify', 'copy', 'clean' ]);
+    grunt.registerTask('default', [
+      'jshint',
+      'concat',
+      'less',
+      'copy',
+      'watch'
+    ]);
+    grunt.registerTask('deploy', [
+      'jshint',
+      'concat',
+      'copy',
+      'clean'
+    ]);
   }
 
   module.exports = Gruntfile;
