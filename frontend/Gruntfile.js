@@ -2,7 +2,8 @@
   'use strict';
 
   var components = [
-        'angular/angular.js'
+        'angular/angular.js',
+        'angular-ui-router/release/angular-ui-router.js'
       ].map(
         function(item) {
           return 'bower_components/' + item;
@@ -13,13 +14,30 @@
     grunt.initConfig({
       pkg   : grunt.file.readJSON('bower.json'),
       jshint: {
-        'source': '<%= watch.source.files =>',
-        'test': '<%= watch.test.files =>',
-        'config': '<%= watch.config.files =>',
+        'source': 'src/**/*.js',
+        'config': 'config/**/*.json',
         options: {
           globals: {
             'strict' : true,
             'browser': true
+          }
+        }
+      },
+      ngtemplates: {
+        'templates': {
+          src: '<%= watch.templates.files %>',
+          dest: 'build/_templates.js',
+          options: {
+            standalone: 'true',
+            htmlmin: {
+              collapseBooleanAttributes:      true,
+              collapseWhitespace:             true,
+              removeAttributeQuotes:          true,
+              removeComments:                 true,
+              removeEmptyAttributes:          true,
+              removeScriptTypeAttributes:     true,
+              removeStyleLinkTypeAttributes:  true
+            }
           }
         }
       },
@@ -37,7 +55,7 @@
           dest: 'build/_build.less'
         },
         'build': {
-          src : [ 'build/_components.js', 'build/_source.js' ],
+          src : [ 'build/_components.js', 'build/_templates.js', 'build/_source.js' ],
           dest: 'build/_build.js'
         }
       },
@@ -53,16 +71,34 @@
       },
       copy: {
         'javascripts': {
-          files: [{
-            src: 'build/_build.js',
-            dest: '../public/js/app.js'
-          }]
+          files: [
+            {
+              src: 'build/_build.js',
+              dest: '../public/js/app.js'
+            }
+          ]
         },
         'stylesheets': {
-          files: [{
-                    src: 'build/_build.css',
-                    dest: '../public/js/styles.css'
-                  }]
+          files: [
+            {
+              src: 'build/_build.css',
+              dest: '../public/css/styles.css'
+            }
+          ]
+        }
+      },
+      karma: {
+        unit: {
+          options: {
+            frameworks: [ 'jasmine' ],
+            singleRun: true,
+            files: [
+              'build/_build.js',
+              'bower_components/angular-mocks/angular-mocks.js',
+              'test/**/*.spec.js'
+            ],
+            browsers: [ 'PhantomJS' ]
+          }
         }
       },
       watch: {
@@ -74,23 +110,23 @@
           }
         },
         'test': {
-          files: [ 'test/**/*.spec.js' ],
-          tasks: [ 'jshint:test', 'karma' ],
+          files: [ 'src/**/*.spec.coffee' ],
+          tasks: [ 'karma' ],
           options: {
             spawn: false
           }
         },
         'config': {
-          files: [ 'Gruntfile.js', 'config/**/*.json' ],
-          tasks: []
+          files: [ 'config/**/*.json' ],
+          tasks: [ 'default' ]
         },
         'less': {
           files: [ 'src/**/*.less' ],
-          tasks: []
+          tasks: [ 'default' ]
         },
         'templates': {
           files: [ 'src/**/*.tpl.html' ],
-          tasks: []
+          tasks: [ 'default' ]
         }
       },
       clean: [ 'build/*' ]
@@ -103,7 +139,9 @@
       'grunt-contrib-copy',
       'grunt-contrib-watch',
       'grunt-contrib-clean',
-      'grunt-contrib-less'
+      'grunt-contrib-less',
+      'grunt-angular-templates',
+      'grunt-karma'
     ].forEach(
       function(task) {
         grunt.loadNpmTasks(task);
@@ -111,17 +149,23 @@
     );
 
     grunt.registerTask('default', [
+      'clean',
       'jshint',
+      'ngtemplates',
       'concat',
+      'karma',
       'less',
       'copy',
       'watch'
     ]);
     grunt.registerTask('deploy', [
+      'clean',
       'jshint',
+      'ngtemplates',
       'concat',
-      'copy',
-      'clean'
+      'karma',
+      'less',
+      'copy'
     ]);
   }
 
